@@ -1,0 +1,273 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Floating Widget Container */
+.floating-widget-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+/* Widget Panel (Open State) */
+.widget-panel {
+    width: 350px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-origin: bottom right;
+}
+
+.widget-panel.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Widget Header */
+.widget-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.widget-title-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,0.4);
+    transform: rotate(90deg);
+}
+
+/* Widget Body */
+.widget-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.5);
+}
+
+/* Widget Toggle Button (Closed State) */
+.widget-toggle-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.widget-toggle-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
+}
+
+.widget-toggle-btn:active {
+    transform: translateY(1px);
+}
+
+.widget-toggle-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+}
+
+/* Scrollbar styling for webkit */
+.widget-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.widget-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.widget-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.widget-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+/* Example Content Styles */
+.news-item {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-left: 4px solid #667eea;
+    transition: transform 0.2s ease;
+}
+
+.news-item:hover {
+    transform: translateX(5px);
+}
+
+.news-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.news-excerpt {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* --- Game UI Styles --- */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.stat-item i.fa-heart {
+    color: #ff4757;
+}
+
+.stat-item i.fa-coins {
+    color: #ffa502;
+}
+
+.stat-item i.fa-poop {
+    color: #8B4513; /* SaddleBrown */
+}
+
+.stat-item i.fa-g {
+    color: #2ed573; /* Green for productivity */
+}
+
+.game-pet-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.pet-emoji {
+    font-size: 6rem;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+.interaction-icon {
+    position: absolute;
+    font-size: 3rem;
+    color: #667eea;
+    animation: floatUp 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(20px) scale(0.5); opacity: 0; }
+    20% { transform: translateY(0) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-50px) scale(1); opacity: 0; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px) scale(1.05); }
+}
+
+.game-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    background: white;
+    border: none;
+    padding: 15px 0;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    color: #667eea;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
