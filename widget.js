@@ -56,10 +56,22 @@ $(document).ready(function() {
         $widgetContent.html(`
             <div class="game-container">
                 <div class="game-stats">
-                    <div class="stat-item" title="Salud"><i class="fa-solid fa-heart"></i> <span id="petHealth">100</span>%</div>
-                    <div class="stat-item" title="Higiene"><i class="fa-solid fa-poop"></i> <span id="petHygiene">100</span>%</div>
-                    <div class="stat-item" title="Productividad"><i class="fa-solid fa-g"></i> <span id="petProd">100</span>%</div>
-                    <div class="stat-item" title="Monedas"><i class="fa-solid fa-coins"></i> <span id="petCoins">50</span></div>
+                    <div class="stat-item" title="Salud">
+                        <i class="fa-solid fa-heart"></i>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill health-fill" id="petHealth" style="width: 100%;" data-val="100"></div></div>
+                    </div>
+                    <div class="stat-item" title="Monedas">
+                        <i class="fa-solid fa-coins"></i>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill coins-fill" id="petCoins" style="width: 50%;" data-val="50"></div></div>
+                    </div>
+                    <div class="stat-item" title="Higiene">
+                        <i class="fa-solid fa-poop"></i>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill hygiene-fill" id="petHygiene" style="width: 100%;" data-val="100"></div></div>
+                    </div>
+                    <div class="stat-item" title="Productividad">
+                        <i class="fa-solid fa-g"></i>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill prod-fill" id="petProd" style="width: 100%;" data-val="100"></div></div>
+                    </div>
                 </div>
                 
                 <div class="game-pet-area" id="petArea">
@@ -84,19 +96,33 @@ $(document).ready(function() {
             }, 1000);
         }
 
+        // Stat helpers
+        function updateStat(id, change) {
+            const $el = $('#' + id);
+            let current = parseInt($el.attr('data-val'));
+            let newVal = Math.max(0, Math.min(100, current + change));
+            $el.attr('data-val', newVal);
+            $el.css('width', newVal + '%');
+            return newVal;
+        }
+        
+        function getStat(id) {
+            return parseInt($('#' + id).attr('data-val'));
+        }
+
         // Game basic interactivity
         $('#btnShower').on('click', () => { 
             playInteraction('fa-shower');
-            $('#petHealth').text(Math.min(100, parseInt($('#petHealth').text()) + 5));
-            $('#petHygiene').text(Math.min(100, parseInt($('#petHygiene').text()) + 20));
+            updateStat('petHealth', 5);
+            updateStat('petHygiene', 20);
         });
         
         $('#btnFood').on('click', () => { 
-            let coins = parseInt($('#petCoins').text());
+            let coins = getStat('petCoins');
             if(coins >= 10) {
-                $('#petCoins').text(coins - 10);
-                $('#petHealth').text(Math.min(100, parseInt($('#petHealth').text()) + 20));
-                $('#petHygiene').text(Math.max(0, parseInt($('#petHygiene').text()) - 10));
+                updateStat('petCoins', -10);
+                updateStat('petHealth', 20);
+                updateStat('petHygiene', -10);
                 playInteraction('fa-burger');
             } else {
                 alert("No tienes suficientes monedas.");
@@ -104,18 +130,17 @@ $(document).ready(function() {
         });
         
         $('#btnPlay').on('click', () => { 
-            let coins = parseInt($('#petCoins').text());
-            $('#petCoins').text(coins + 5);
-            $('#petProd').text(Math.min(100, parseInt($('#petProd').text()) + 10));
-            $('#petHygiene').text(Math.max(0, parseInt($('#petHygiene').text()) - 5));
-            $('#petHealth').text(Math.max(0, parseInt($('#petHealth').text()) - 5));
+            updateStat('petCoins', 5);
+            updateStat('petProd', 10);
+            updateStat('petHygiene', -5);
+            updateStat('petHealth', -5);
             playInteraction('fa-baseball-bat-ball');
         });
         
         $('#btnClean').on('click', () => { 
             playInteraction('fa-sparkles');
-            $('#petHygiene').text(Math.min(100, parseInt($('#petHygiene').text()) + 30));
-            $('#petProd').text(Math.min(100, parseInt($('#petProd').text()) + 5));
+            updateStat('petHygiene', 30);
+            updateStat('petProd', 5);
         });
     }
 

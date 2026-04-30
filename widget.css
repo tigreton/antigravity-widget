@@ -187,10 +187,11 @@ body {
 }
 
 .game-stats {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 15px;
     background: white;
-    padding: 10px;
+    padding: 15px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
@@ -199,8 +200,27 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: bold;
+    font-size: 1.1rem;
 }
+
+.stat-bar-bg {
+    flex: 1;
+    background: #e9ecef;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 6px;
+}
+
+.health-fill { background: #ff4757; }
+.coins-fill { background: #ffa502; }
+.hygiene-fill { background: #8B4513; }
+.prod-fill { background: #2ed573; }
 
 .stat-item i.fa-heart {
     color: #ff4757;
