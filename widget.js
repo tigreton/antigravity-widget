@@ -78,11 +78,21 @@ $(document).ready(function() {
                     <div class="pet-emoji" id="petAvatar">💩</div>
                 </div>
                 
-                <div class="game-actions">
-                    <button class="action-btn" id="btnShower" title="Duchar"><i class="fa-solid fa-shower"></i></button>
-                    <button class="action-btn" id="btnFood" title="Comer"><i class="fa-solid fa-burger"></i></button>
-                    <button class="action-btn" id="btnPlay" title="Jugar"><i class="fa-solid fa-baseball-bat-ball"></i></button>
-                    <button class="action-btn" id="btnClean" title="Limpiar"><i class="fa-solid fa-broom"></i></button>
+                <div class="game-footer">
+                    <div class="footer-col actions-col">
+                        <button class="action-btn-small" id="btnShower" title="Duchar"><i class="fa-solid fa-shower"></i></button>
+                        <button class="action-btn-small" id="btnFood" title="Comer"><i class="fa-solid fa-burger"></i></button>
+                        <button class="action-btn-small" id="btnPlay" title="Jugar"><i class="fa-solid fa-baseball-bat-ball"></i></button>
+                        <button class="action-btn-small" id="btnClean" title="Limpiar"><i class="fa-solid fa-broom"></i></button>
+                    </div>
+                    <div class="footer-col cart-col">
+                        <button class="action-btn-large" id="btnShop" title="Tienda"><i class="fa-solid fa-cart-shopping"></i></button>
+                    </div>
+                    <div class="footer-col family-col">
+                        <div class="mini-pou">💩</div>
+                        <div class="mini-pou">💩</div>
+                        <div class="mini-pou">💩</div>
+                    </div>
                 </div>
             </div>
         `);
@@ -147,6 +157,10 @@ $(document).ready(function() {
             playInteraction('fa-sparkles');
             updateStat('petHygiene', 30);
             updateStat('petProd', 5);
+        });
+        
+        $('#btnShop').on('click', () => {
+            alert('¡Bienvenido a la tienda! Pronto podrás comprar accesorios para tu Pou.');
         });
     }
 
