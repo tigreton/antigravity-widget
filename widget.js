@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     const $toggleBtn = $('#widgetToggleBtn');
     const $widgetPanel = $('#widgetPanel');
     const $closeBtn = $('#widgetCloseBtn');
@@ -7,12 +7,12 @@ $(document).ready(function() {
     const $widgetIcon = $('#widgetIcon');
 
     // --- Widget Open/Close Logic ---
-    $toggleBtn.on('click', function() {
+    $toggleBtn.on('click', function () {
         $widgetPanel.addClass('open');
         $toggleBtn.addClass('hidden');
     });
 
-    $closeBtn.on('click', function() {
+    $closeBtn.on('click', function () {
         $widgetPanel.removeClass('open');
         setTimeout(() => {
             $toggleBtn.removeClass('hidden');
@@ -20,7 +20,7 @@ $(document).ready(function() {
     });
 
     // --- Mode Switch Logic ---
-    
+
     // Fake News Data
     const newsData = [
         { title: "Nueva actualización disponible", excerpt: "Hemos mejorado el rendimiento de la aplicación en un 20%." },
@@ -113,29 +113,29 @@ $(document).ready(function() {
             let newVal = Math.max(0, Math.min(100, current + change));
             $el.attr('data-val', newVal);
             $el.css('width', newVal + '%');
-            
+
             // Update tooltip text
             const $parent = $el.closest('.stat-item');
             const name = $parent.attr('data-name');
             $parent.attr('title', name + ': ' + newVal + '%');
-            
+
             return newVal;
         }
-        
+
         function getStat(id) {
             return parseInt($('#' + id).attr('data-val'));
         }
 
         // Game basic interactivity
-        $('#btnShower').on('click', () => { 
+        $('#btnShower').on('click', () => {
             playInteraction('fa-shower');
             updateStat('petHealth', 5);
             updateStat('petHygiene', 20);
         });
-        
-        $('#btnFood').on('click', () => { 
+
+        $('#btnFood').on('click', () => {
             let coins = getStat('petCoins');
-            if(coins >= 10) {
+            if (coins >= 10) {
                 updateStat('petCoins', -10);
                 updateStat('petHealth', 20);
                 updateStat('petHygiene', -10);
@@ -144,39 +144,40 @@ $(document).ready(function() {
                 playInteraction('fa-xmark');
             }
         });
-        
-        $('#btnPlay').on('click', () => { 
+
+        $('#btnPlay').on('click', () => {
             updateStat('petCoins', 5);
             updateStat('petProd', 10);
             updateStat('petHygiene', -5);
             updateStat('petHealth', -5);
             playInteraction('fa-baseball-bat-ball');
         });
-        
-        $('#btnClean').on('click', () => { 
+
+        $('#btnClean').on('click', () => {
             playInteraction('fa-sparkles');
             updateStat('petHygiene', 30);
             updateStat('petProd', 5);
         });
-        
+
         $('#btnShop').on('click', () => {
-            playInteraction('fa-store');
+            var shopModal = new bootstrap.Modal(document.getElementById('shopModal'));
+            shopModal.show();
         });
-        
+
         $('#btnFamily').on('click', () => {
             playInteraction('fa-heart');
         });
     }
 
     // Bind switch buttons
-    $('#btnModeNews').on('click', function() {
+    $('#btnModeNews').on('click', function () {
         loadNewsWidget();
         // Optional: Open the widget to show it
         $widgetPanel.addClass('open');
         $toggleBtn.addClass('hidden');
     });
 
-    $('#btnModeGame').on('click', function() {
+    $('#btnModeGame').on('click', function () {
         loadGameWidget();
         // Optional: Open the widget to show it
         $widgetPanel.addClass('open');
