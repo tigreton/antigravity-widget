@@ -56,19 +56,19 @@ $(document).ready(function() {
         $widgetContent.html(`
             <div class="game-container">
                 <div class="game-stats">
-                    <div class="stat-item" title="Salud">
+                    <div class="stat-item" title="Salud: 100%" data-name="Salud">
                         <i class="fa-solid fa-heart"></i>
                         <div class="stat-bar-bg"><div class="stat-bar-fill health-fill" id="petHealth" style="width: 100%;" data-val="100"></div></div>
                     </div>
-                    <div class="stat-item" title="Monedas">
+                    <div class="stat-item" title="Monedas: 50%" data-name="Monedas">
                         <i class="fa-solid fa-coins"></i>
                         <div class="stat-bar-bg"><div class="stat-bar-fill coins-fill" id="petCoins" style="width: 50%;" data-val="50"></div></div>
                     </div>
-                    <div class="stat-item" title="Higiene">
+                    <div class="stat-item" title="Higiene: 100%" data-name="Higiene">
                         <i class="fa-solid fa-poop"></i>
                         <div class="stat-bar-bg"><div class="stat-bar-fill hygiene-fill" id="petHygiene" style="width: 100%;" data-val="100"></div></div>
                     </div>
-                    <div class="stat-item" title="Productividad">
+                    <div class="stat-item" title="Productividad: 100%" data-name="Productividad">
                         <i class="fa-solid fa-g"></i>
                         <div class="stat-bar-bg"><div class="stat-bar-fill prod-fill" id="petProd" style="width: 100%;" data-val="100"></div></div>
                     </div>
@@ -103,6 +103,12 @@ $(document).ready(function() {
             let newVal = Math.max(0, Math.min(100, current + change));
             $el.attr('data-val', newVal);
             $el.css('width', newVal + '%');
+            
+            // Update tooltip text
+            const $parent = $el.closest('.stat-item');
+            const name = $parent.attr('data-name');
+            $parent.attr('title', name + ': ' + newVal + '%');
+            
             return newVal;
         }
         
