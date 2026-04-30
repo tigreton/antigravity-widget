@@ -88,11 +88,11 @@ $(document).ready(function() {
                     <div class="footer-col cart-col">
                         <button class="action-btn-large" id="btnShop" title="Tienda"><i class="fa-solid fa-cart-shopping"></i></button>
                     </div>
-                    <div class="footer-col family-col">
+                    <button class="footer-col family-col" id="btnFamily" title="Familia Pou">
                         <div class="mini-pou">💩</div>
                         <div class="mini-pou">💩</div>
                         <div class="mini-pou">💩</div>
-                    </div>
+                    </button>
                 </div>
             </div>
         `);
@@ -161,6 +161,11 @@ $(document).ready(function() {
         
         $('#btnShop').on('click', () => {
             alert('¡Bienvenido a la tienda! Pronto podrás comprar accesorios para tu Pou.');
+        });
+        
+        $('#btnFamily').on('click', () => {
+            alert('¡Hola! Somos la familia Pou.');
+            playInteraction('fa-heart');
         });
     }
 
