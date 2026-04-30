@@ -141,7 +141,7 @@ $(document).ready(function() {
                 updateStat('petHygiene', -10);
                 playInteraction('fa-burger');
             } else {
-                alert("No tienes suficientes monedas.");
+                playInteraction('fa-xmark');
             }
         });
         
@@ -160,11 +160,10 @@ $(document).ready(function() {
         });
         
         $('#btnShop').on('click', () => {
-            alert('¡Bienvenido a la tienda! Pronto podrás comprar accesorios para tu Pou.');
+            playInteraction('fa-store');
         });
         
         $('#btnFamily').on('click', () => {
-            alert('¡Hola! Somos la familia Pou.');
             playInteraction('fa-heart');
         });
     }
