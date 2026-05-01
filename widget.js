@@ -240,27 +240,22 @@ $(document).ready(function () {
 
         // Screenshot handler
         $('#btnScreenshot').on('click', function() {
+            const area = document.getElementById('petArea');
             const container = document.getElementById('petAvatarContainer');
             // Pause bounce animation for clean capture
             container.style.animationPlayState = 'paused';
             
-            // Temporarily expand container for overflow cosmetics
-            const area = document.getElementById('petArea');
-            const origOverflow = area.style.overflow;
-            area.style.overflow = 'visible';
-            
-            domtoimage.toPng(container, {
+            domtoimage.toPng(area, {
                 bgcolor: null,
-                style: { animation: 'none', overflow: 'visible' },
-                width: container.scrollWidth + 120,
-                height: container.scrollHeight + 100,
                 filter: function(node) {
-                    // Skip link/style elements that cause CORS issues
-                    return !(node.tagName === 'LINK' || (node.tagName === 'STYLE' && node.sheet));
+                    // Exclude the name label and screenshot button
+                    if (node.id === 'petNameDisplay' || node.id === 'btnScreenshot') return false;
+                    // Exclude interaction icons
+                    if (node.classList && node.classList.contains('interaction-icon')) return false;
+                    return true;
                 }
             }).then(function(dataUrl) {
                 container.style.animationPlayState = '';
-                area.style.overflow = origOverflow;
                 const link = document.createElement('a');
                 link.download = (petState.name || 'pou') + '_avatar.png';
                 link.href = dataUrl;
@@ -268,7 +263,6 @@ $(document).ready(function () {
             }).catch(function(err) {
                 console.warn('Screenshot error:', err);
                 container.style.animationPlayState = '';
-                area.style.overflow = origOverflow;
             });
         });
 
