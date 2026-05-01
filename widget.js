@@ -241,22 +241,34 @@ $(document).ready(function () {
         // Screenshot handler
         $('#btnScreenshot').on('click', function() {
             const container = document.getElementById('petAvatarContainer');
-            // Clone and render off-screen with overflow visible
-            const clone = container.cloneNode(true);
-            const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'position:fixed; left:-9999px; top:0; padding:50px 60px; overflow:visible; background:transparent;';
-            clone.style.animation = 'none';
-            wrapper.appendChild(clone);
-            document.body.appendChild(wrapper);
+            // Pause bounce animation for clean capture
+            container.style.animationPlayState = 'paused';
             
-            domtoimage.toPng(wrapper, { bgcolor: null, scale: 3 }).then(function(dataUrl) {
-                document.body.removeChild(wrapper);
+            // Temporarily expand container for overflow cosmetics
+            const area = document.getElementById('petArea');
+            const origOverflow = area.style.overflow;
+            area.style.overflow = 'visible';
+            
+            domtoimage.toPng(container, {
+                bgcolor: null,
+                style: { animation: 'none', overflow: 'visible' },
+                width: container.scrollWidth + 120,
+                height: container.scrollHeight + 100,
+                filter: function(node) {
+                    // Skip link/style elements that cause CORS issues
+                    return !(node.tagName === 'LINK' || (node.tagName === 'STYLE' && node.sheet));
+                }
+            }).then(function(dataUrl) {
+                container.style.animationPlayState = '';
+                area.style.overflow = origOverflow;
                 const link = document.createElement('a');
                 link.download = (petState.name || 'pou') + '_avatar.png';
                 link.href = dataUrl;
                 link.click();
-            }).catch(function() {
-                document.body.removeChild(wrapper);
+            }).catch(function(err) {
+                console.warn('Screenshot error:', err);
+                container.style.animationPlayState = '';
+                area.style.overflow = origOverflow;
             });
         });
 
