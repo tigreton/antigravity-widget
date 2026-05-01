@@ -195,6 +195,6 @@ $(document).ready(function () {
         $toggleBtn.addClass('hidden');
     });
 
-    // Initialize with News mode by default
-    loadNewsWidget();
+    // Initialize with Game mode by default
+    loadGameWidget();
 });
