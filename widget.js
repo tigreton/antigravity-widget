@@ -251,4 +251,41 @@ $(document).ready(function () {
 
     // Initialize with Game mode by default
     loadGameWidget();
+
+    // --- Export / Import ---
+    $('#btnExport').on('click', function() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem('pouWidgetState') || '{}');
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "pou_partida.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    });
+
+    $('#btnImport').on('click', function() {
+        $('#fileImport').click();
+    });
+
+    $('#fileImport').on('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const contents = e.target.result;
+                const parsed = JSON.parse(contents);
+                if (parsed && typeof parsed.petHealth !== 'undefined') {
+                    localStorage.setItem('pouWidgetState', JSON.stringify(parsed));
+                    alert("Partida importada con éxito. La página se recargará.");
+                    location.reload();
+                } else {
+                    alert("El archivo no parece ser una partida válida.");
+                }
+            } catch(err) {
+                alert("Error al leer el archivo.");
+            }
+        };
+        reader.readAsText(file);
+    });
 });
