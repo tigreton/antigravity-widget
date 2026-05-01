@@ -241,15 +241,16 @@ $(document).ready(function () {
         // Screenshot handler
         $('#btnScreenshot').on('click', function() {
             const container = document.getElementById('petAvatarContainer');
-            // Pause animation and add padding so cosmetics aren't clipped
-            container.style.animation = 'none';
-            container.style.padding = '40px 50px';
-            container.style.margin = '-40px -50px';
+            // Clone and render off-screen with overflow visible
+            const clone = container.cloneNode(true);
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'position:fixed; left:-9999px; top:0; padding:50px 60px; overflow:visible; background:transparent;';
+            clone.style.animation = 'none';
+            wrapper.appendChild(clone);
+            document.body.appendChild(wrapper);
             
-            html2canvas(container, { backgroundColor: null, scale: 3 }).then(canvas => {
-                container.style.animation = '';
-                container.style.padding = '';
-                container.style.margin = '';
+            html2canvas(wrapper, { backgroundColor: null, scale: 3 }).then(canvas => {
+                document.body.removeChild(wrapper);
                 const link = document.createElement('a');
                 link.download = (petState.name || 'pou') + '_avatar.png';
                 link.href = canvas.toDataURL('image/png');
