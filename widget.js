@@ -249,12 +249,14 @@ $(document).ready(function () {
             wrapper.appendChild(clone);
             document.body.appendChild(wrapper);
             
-            html2canvas(wrapper, { backgroundColor: null, scale: 3 }).then(canvas => {
+            domtoimage.toPng(wrapper, { bgcolor: null, scale: 3 }).then(function(dataUrl) {
                 document.body.removeChild(wrapper);
                 const link = document.createElement('a');
                 link.download = (petState.name || 'pou') + '_avatar.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
+            }).catch(function() {
+                document.body.removeChild(wrapper);
             });
         });
 
