@@ -250,7 +250,6 @@ body {
 
 .pet-emoji {
     font-size: 6rem;
-    animation: bounce 2s infinite ease-in-out;
 }
 
 .interaction-icon {
@@ -427,6 +426,7 @@ body {
 .pet-avatar-container {
     position: relative;
     display: inline-block;
+    animation: bounce 2s infinite ease-in-out;
 }
 
 .cosmetic-item {
@@ -453,6 +453,9 @@ body {
     bottom: -15px;
     font-size: 4rem;
     z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    width: 140%;
 }
 
 .wardrobe-modal {

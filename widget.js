@@ -121,7 +121,7 @@ $(document).ready(function () {
                         <div class="pet-emoji" id="petAvatar" style="filter: hue-rotate(${petState.look.colorHue || 0}deg);">💩</div>
                         <div class="cosmetic-item cosmetic-hat" id="cosmeticHat">${petState.look.hat || ''}</div>
                         <div class="cosmetic-item cosmetic-glasses" id="cosmeticGlasses">${petState.look.glasses || ''}</div>
-                        <div class="cosmetic-item cosmetic-shoes" id="cosmeticShoes">${petState.look.shoes || ''}</div>
+                        <div class="cosmetic-item cosmetic-shoes" id="cosmeticShoes">${petState.look.shoes ? `<div class="shoe-left">${petState.look.shoes}</div><div class="shoe-right" style="transform: scaleX(-1);">${petState.look.shoes}</div>` : ''}</div>
                     </div>
                 </div>
                 
@@ -144,9 +144,14 @@ $(document).ready(function () {
                 
                 <!-- In-widget modal for Shop/Wardrobe -->
                 <div id="gameModal" class="game-modal d-none">
-                    <div class="game-modal-content wardrobe-modal">
+                    <div class="game-modal-content wardrobe-modal position-relative">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" id="btnCancelWardrobe" aria-label="Close"></button>
                         <h4 class="text-success fw-bold mb-3">Vestidor</h4>
                         
+                        <div class="text-center mb-3">
+                            <div class="pet-emoji d-inline-block" id="wardrobePreview" style="font-size: 3.5rem; filter: hue-rotate(${petState.look.colorHue || 0}deg);">💩</div>
+                        </div>
+
                         <div class="wardrobe-section text-start">
                             <label class="fw-bold small mb-1">Color (Tono)</label>
                             <input type="range" class="form-range" id="colorSlider" min="0" max="360" value="${petState.look.colorHue || 0}">
@@ -270,30 +275,57 @@ $(document).ready(function () {
         });
 
         // Wardrobe Logic
+        let draftLook = null;
+
+        function highlightActiveCosmetics() {
+            $('.btn-cosmetic').removeClass('active');
+            $(`.btn-cosmetic[data-type="hat"][data-val="${draftLook.hat || ''}"]`).addClass('active');
+            $(`.btn-cosmetic[data-type="glasses"][data-val="${draftLook.glasses || ''}"]`).addClass('active');
+            $(`.btn-cosmetic[data-type="shoes"][data-val="${draftLook.shoes || ''}"]`).addClass('active');
+        }
+
         $('#colorSlider').on('input', function() {
             const hue = $(this).val();
-            petState.look.colorHue = hue;
-            $('#petAvatar').css('filter', `hue-rotate(${hue}deg)`);
+            draftLook.colorHue = hue;
+            $('#wardrobePreview').css('filter', `hue-rotate(${hue}deg)`);
         });
 
         $('.btn-cosmetic').on('click', function() {
             const type = $(this).data('type');
             const val = $(this).data('val');
-            petState.look[type] = val;
-            
-            if (type === 'hat') $('#cosmeticHat').text(val);
-            if (type === 'glasses') $('#cosmeticGlasses').text(val);
-            if (type === 'shoes') $('#cosmeticShoes').text(val);
+            draftLook[type] = val;
+            highlightActiveCosmetics();
         });
 
         $('#btnShop').on('click', () => {
+            draftLook = { ...petState.look };
+            $('#colorSlider').val(draftLook.colorHue || 0);
+            $('#wardrobePreview').css('filter', `hue-rotate(${draftLook.colorHue || 0}deg)`);
+            highlightActiveCosmetics();
             $('#gameModal').removeClass('d-none');
             logAction('Abrió el vestidor');
         });
 
-        $('#btnCloseGameModal').on('click', () => {
+        $('#btnCancelWardrobe').on('click', () => {
             $('#gameModal').addClass('d-none');
+        });
+
+        $('#btnCloseGameModal').on('click', () => {
+            petState.look = { ...draftLook };
             saveState();
+            
+            // Apply to main pet
+            $('#petAvatar').css('filter', `hue-rotate(${petState.look.colorHue}deg)`);
+            $('#cosmeticHat').text(petState.look.hat || '');
+            $('#cosmeticGlasses').text(petState.look.glasses || '');
+            
+            if (petState.look.shoes) {
+                $('#cosmeticShoes').html(`<div class="shoe-left">${petState.look.shoes}</div><div class="shoe-right" style="transform: scaleX(-1);">${petState.look.shoes}</div>`);
+            } else {
+                $('#cosmeticShoes').empty();
+            }
+            
+            $('#gameModal').addClass('d-none');
         });
 
         $('#btnFamily').on('click', () => {
