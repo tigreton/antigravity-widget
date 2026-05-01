@@ -41,11 +41,17 @@ $(document).ready(function () {
 
     // --- Cosmetic Helpers ---
     function applyCosmeticStyles($el, config) {
-        if (!config || !config.emoji) {
-            $el.text('').css({'filter': '', 'transform': ''});
+        if (!config || config.id === 'none') {
+            $el.empty().css({'filter': '', 'transform': ''});
             return;
         }
-        $el.text(config.emoji);
+
+        if (config.image) {
+            $el.html(`<img src="${config.image}" style="width: 100%; height: auto; display: block;">`);
+        } else {
+            $el.text(config.emoji || '');
+        }
+
         $el.css({
             'filter': `hue-rotate(${config.hue || 0}deg)`,
             'transform': `translateX(-50%) translate(${config.x || 0}px, ${config.y || 0}px) scale(${config.scale || 1})`
@@ -92,10 +98,14 @@ $(document).ready(function () {
 
             const shoesConfig = COSMETICS_CONFIG.shoes.find(s => s.id === look.shoes || s.emoji === look.shoes) || COSMETICS_CONFIG.shoes[0];
             const $shoes = $('#cosmeticShoes');
-            if (shoesConfig && shoesConfig.emoji) {
+            if (shoesConfig && shoesConfig.id !== 'none') {
+                const content = shoesConfig.image ? 
+                    `<img src="${shoesConfig.image}" style="width: 100%; height: auto; display: block;">` : 
+                    shoesConfig.emoji;
+                
                 $shoes.html(`
-                    <div class="shoe-left" style="filter: hue-rotate(${shoesConfig.hue || 0}deg); transform: translate(${shoesConfig.x || 0}px, ${shoesConfig.y || 0}px) scale(${shoesConfig.scale || 1})">${shoesConfig.emoji}</div>
-                    <div class="shoe-right" style="filter: hue-rotate(${shoesConfig.hue || 0}deg); transform: translate(${-shoesConfig.x || 0}px, ${shoesConfig.y || 0}px) scaleX(-1) scale(${shoesConfig.scale || 1})">${shoesConfig.emoji}</div>
+                    <div class="shoe-left" style="filter: hue-rotate(${shoesConfig.hue || 0}deg); transform: translate(${shoesConfig.x || 0}px, ${shoesConfig.y || 0}px) scale(${shoesConfig.scale || 1})">${content}</div>
+                    <div class="shoe-right" style="filter: hue-rotate(${shoesConfig.hue || 0}deg); transform: translate(${-shoesConfig.x || 0}px, ${shoesConfig.y || 0}px) scaleX(-1) scale(${shoesConfig.scale || 1})">${content}</div>
                 `);
             } else {
                 $shoes.empty();
@@ -115,8 +125,14 @@ $(document).ready(function () {
         items.forEach(item => {
             // Check match by ID or Emoji for backward compatibility
             const isActive = (item.id === currentVal || item.emoji === currentVal) ? 'active' : '';
+            
+            let content = item.emoji || 'X';
+            if (item.image) {
+                content = `<img src="${item.image}" style="width: 24px; height: 24px; object-fit: contain;">`;
+            }
+
             html += `<button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic ${isActive}" 
-                        data-type="${type}" data-val="${item.id}">${item.emoji || 'X'}</button>`;
+                        data-type="${type}" data-val="${item.id}">${content}</button>`;
         });
         return html;
     }
