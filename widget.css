@@ -456,33 +456,55 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 3.5rem;
+    font-size: 4rem;
     pointer-events: none;
     z-index: 5;
     line-height: 1;
+    top: 0;
 }
 
 .cosmetic-hat {
-    top: -5px;
     z-index: 6;
 }
 
 .cosmetic-glasses {
-    top: 30px;
-    font-size: 4.5rem;
+    z-index: 5;
 }
 
 .cosmetic-shoes {
-    bottom: -15px;
-    font-size: 4rem;
     z-index: 4;
     display: flex;
     justify-content: space-between;
     width: 140%;
+    top: auto;
+    bottom: 0;
 }
 
 .wardrobe-modal {
     max-height: 90%;
     overflow-y: auto;
     width: 90%;
+}
+.btn-cosmetic {
+    min-width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px !important;
+    transition: all 0.2s;
+    background: white;
+}
+
+.btn-cosmetic:hover {
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.btn-cosmetic.active {
+    background: #667eea !important;
+    color: white !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
 }
