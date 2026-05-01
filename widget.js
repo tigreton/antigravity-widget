@@ -53,7 +53,13 @@ $(document).ready(function () {
         petCoins: 50,
         petHygiene: 100,
         petProd: 100,
-        log: []
+        log: [],
+        look: {
+            colorHue: 0,
+            hat: null,
+            glasses: null,
+            shoes: null
+        }
     };
 
     function loadState() {
@@ -61,6 +67,9 @@ $(document).ready(function () {
         if (saved) {
             try {
                 petState = { ...petState, ...JSON.parse(saved) };
+                if (!petState.look) {
+                    petState.look = { colorHue: 0, hat: null, glasses: null, shoes: null };
+                }
             } catch (e) {}
         }
     }
@@ -108,7 +117,12 @@ $(document).ready(function () {
                 
                 <div class="game-pet-area" id="petArea">
                     <div class="pet-name-display" id="petNameDisplay" title="Haz clic para cambiar el nombre">${petState.name}</div>
-                    <div class="pet-emoji" id="petAvatar">💩</div>
+                    <div class="pet-avatar-container" id="petAvatarContainer" style="position: relative; display: inline-block;">
+                        <div class="pet-emoji" id="petAvatar" style="filter: hue-rotate(${petState.look.colorHue || 0}deg);">💩</div>
+                        <div class="cosmetic-item cosmetic-hat" id="cosmeticHat">${petState.look.hat || ''}</div>
+                        <div class="cosmetic-item cosmetic-glasses" id="cosmeticGlasses">${petState.look.glasses || ''}</div>
+                        <div class="cosmetic-item cosmetic-shoes" id="cosmeticShoes">${petState.look.shoes || ''}</div>
+                    </div>
                 </div>
                 
                 <div class="game-footer">
@@ -119,7 +133,7 @@ $(document).ready(function () {
                         <button class="action-btn-small" id="btnClean" title="Limpiar"><i class="fa-solid fa-broom"></i></button>
                     </div>
                     <div class="footer-col cart-col">
-                        <button class="action-btn-large" id="btnShop" title="Tienda"><i class="fa-solid fa-cart-shopping"></i></button>
+                        <button class="action-btn-large" id="btnShop" title="Tienda / Vestidor"><i class="fa-solid fa-cart-shopping"></i></button>
                     </div>
                     <button class="footer-col family-col" id="btnFamily" title="Familia Pou">
                         <div class="mini-pou">💩</div>
@@ -128,11 +142,47 @@ $(document).ready(function () {
                     </button>
                 </div>
                 
-                <!-- In-widget modal -->
+                <!-- In-widget modal for Shop/Wardrobe -->
                 <div id="gameModal" class="game-modal d-none">
-                    <div class="game-modal-content">
-                        <h3 class="text-success fw-bold m-0 mb-3">¡Felicidades!</h3>
-                        <button class="btn btn-sm btn-outline-secondary" id="btnCloseGameModal">Cerrar</button>
+                    <div class="game-modal-content wardrobe-modal">
+                        <h4 class="text-success fw-bold mb-3">Vestidor</h4>
+                        
+                        <div class="wardrobe-section text-start">
+                            <label class="fw-bold small mb-1">Color (Tono)</label>
+                            <input type="range" class="form-range" id="colorSlider" min="0" max="360" value="${petState.look.colorHue || 0}">
+                        </div>
+
+                        <div class="wardrobe-section text-start mt-2">
+                            <label class="fw-bold small mb-1">Gorro</label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="hat" data-val="">X</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="hat" data-val="🎩">🎩</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="hat" data-val="🧢">🧢</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="hat" data-val="👑">👑</button>
+                            </div>
+                        </div>
+
+                        <div class="wardrobe-section text-start mt-2">
+                            <label class="fw-bold small mb-1">Gafas</label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="glasses" data-val="">X</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="glasses" data-val="🕶️">🕶️</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="glasses" data-val="👓">👓</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="glasses" data-val="🥽">🥽</button>
+                            </div>
+                        </div>
+
+                        <div class="wardrobe-section text-start mt-2">
+                            <label class="fw-bold small mb-1">Zapatos</label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="shoes" data-val="">X</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="shoes" data-val="👟">👟</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="shoes" data-val="🥾">🥾</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm btn-cosmetic" data-type="shoes" data-val="🩰">🩰</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-sm btn-success mt-3 w-100" id="btnCloseGameModal">Guardar y Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -219,13 +269,31 @@ $(document).ready(function () {
             logAction('Limpió su zona');
         });
 
+        // Wardrobe Logic
+        $('#colorSlider').on('input', function() {
+            const hue = $(this).val();
+            petState.look.colorHue = hue;
+            $('#petAvatar').css('filter', `hue-rotate(${hue}deg)`);
+        });
+
+        $('.btn-cosmetic').on('click', function() {
+            const type = $(this).data('type');
+            const val = $(this).data('val');
+            petState.look[type] = val;
+            
+            if (type === 'hat') $('#cosmeticHat').text(val);
+            if (type === 'glasses') $('#cosmeticGlasses').text(val);
+            if (type === 'shoes') $('#cosmeticShoes').text(val);
+        });
+
         $('#btnShop').on('click', () => {
             $('#gameModal').removeClass('d-none');
-            logAction('Abrió la tienda');
+            logAction('Abrió el vestidor');
         });
 
         $('#btnCloseGameModal').on('click', () => {
             $('#gameModal').addClass('d-none');
+            saveState();
         });
 
         $('#btnFamily').on('click', () => {

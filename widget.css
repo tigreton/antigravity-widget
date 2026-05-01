@@ -423,3 +423,40 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+.pet-avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.cosmetic-item {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3.5rem;
+    pointer-events: none;
+    z-index: 5;
+    line-height: 1;
+}
+
+.cosmetic-hat {
+    top: -20px;
+    z-index: 6;
+}
+
+.cosmetic-glasses {
+    top: 30px;
+    font-size: 4.5rem;
+}
+
+.cosmetic-shoes {
+    bottom: -15px;
+    font-size: 4rem;
+    z-index: 4;
+}
+
+.wardrobe-modal {
+    max-height: 90%;
+    overflow-y: auto;
+    width: 90%;
+}
