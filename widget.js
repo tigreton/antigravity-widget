@@ -117,6 +117,7 @@ $(document).ready(function () {
                 
                 <div class="game-pet-area" id="petArea">
                     <div class="pet-name-display" id="petNameDisplay" title="Haz clic para cambiar el nombre">${petState.name}</div>
+                    <button class="pet-screenshot-btn" id="btnScreenshot" title="Descargar imagen del Pou"><i class="fa-solid fa-camera"></i></button>
                     <div class="pet-avatar-container" id="petAvatarContainer" style="position: relative; display: inline-block;">
                         <div class="pet-emoji" id="petAvatar" style="filter: hue-rotate(${petState.look.colorHue || 0}deg);">💩</div>
                         <div class="cosmetic-item cosmetic-hat" id="cosmeticHat">${petState.look.hat || ''}</div>
@@ -235,6 +236,20 @@ $(document).ready(function () {
                 logAction('Cambió de nombre a ' + petState.name);
                 saveState();
             }
+        });
+
+        // Screenshot handler
+        $('#btnScreenshot').on('click', function() {
+            const container = document.getElementById('petAvatarContainer');
+            // Pause animation temporarily for clean capture
+            container.style.animation = 'none';
+            html2canvas(container, { backgroundColor: null, scale: 3 }).then(canvas => {
+                container.style.animation = '';
+                const link = document.createElement('a');
+                link.download = (petState.name || 'pou') + '_avatar.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         });
 
         // Game basic interactivity
