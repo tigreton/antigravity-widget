@@ -46,6 +46,38 @@ $(document).ready(function () {
         });
     }
 
+    // --- Game State Management ---
+    let petState = {
+        name: 'Pou',
+        petHealth: 100,
+        petCoins: 50,
+        petHygiene: 100,
+        petProd: 100,
+        log: []
+    };
+
+    function loadState() {
+        const saved = localStorage.getItem('pouWidgetState');
+        if (saved) {
+            try {
+                petState = { ...petState, ...JSON.parse(saved) };
+            } catch (e) {}
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem('pouWidgetState', JSON.stringify(petState));
+    }
+
+    function logAction(actionStr) {
+        petState.log.push({ action: actionStr, time: new Date().toLocaleTimeString() });
+        if (petState.log.length > 20) petState.log.shift();
+        saveState();
+    }
+    
+    // Load state on startup
+    loadState();
+
     function loadGameWidget() {
         // Update Header
         $widgetTitle.text('Mi Pou');
@@ -56,25 +88,26 @@ $(document).ready(function () {
         $widgetContent.html(`
             <div class="game-container">
                 <div class="game-stats">
-                    <div class="stat-item" title="Salud: 100%" data-name="Salud">
+                    <div class="stat-item" title="Salud: ${petState.petHealth}%" data-name="Salud">
                         <i class="fa-solid fa-heart"></i>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill health-fill" id="petHealth" style="width: 100%;" data-val="100"></div></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill health-fill" id="petHealth" style="width: ${petState.petHealth}%;" data-val="${petState.petHealth}"></div></div>
                     </div>
-                    <div class="stat-item" title="Monedas: 50%" data-name="Monedas">
+                    <div class="stat-item" title="Monedas: ${petState.petCoins}" data-name="Monedas">
                         <i class="fa-solid fa-coins"></i>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill coins-fill" id="petCoins" style="width: 50%;" data-val="50"></div></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill coins-fill" id="petCoins" style="width: ${Math.min(100, petState.petCoins)}%;" data-val="${petState.petCoins}"></div></div>
                     </div>
-                    <div class="stat-item" title="Higiene: 100%" data-name="Higiene">
+                    <div class="stat-item" title="Higiene: ${petState.petHygiene}%" data-name="Higiene">
                         <i class="fa-solid fa-poop"></i>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill hygiene-fill" id="petHygiene" style="width: 100%;" data-val="100"></div></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill hygiene-fill" id="petHygiene" style="width: ${petState.petHygiene}%;" data-val="${petState.petHygiene}"></div></div>
                     </div>
-                    <div class="stat-item" title="Productividad: 100%" data-name="Productividad">
+                    <div class="stat-item" title="Productividad: ${petState.petProd}%" data-name="Productividad">
                         <i class="fa-solid fa-g"></i>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill prod-fill" id="petProd" style="width: 100%;" data-val="100"></div></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill prod-fill" id="petProd" style="width: ${petState.petProd}%;" data-val="${petState.petProd}"></div></div>
                     </div>
                 </div>
                 
                 <div class="game-pet-area" id="petArea">
+                    <div class="pet-name-display" id="petNameDisplay" title="Haz clic para cambiar el nombre">${petState.name}</div>
                     <div class="pet-emoji" id="petAvatar">💩</div>
                 </div>
                 
@@ -117,28 +150,44 @@ $(document).ready(function () {
         // Stat helpers
         function updateStat(id, change) {
             const $el = $('#' + id);
-            let current = parseInt($el.attr('data-val'));
-            let newVal = Math.max(0, Math.min(100, current + change));
+            let current = petState[id];
+            let newVal = Math.max(0, current + change); 
+            if (id !== 'petCoins') newVal = Math.min(100, newVal);
+            
+            petState[id] = newVal;
+            
             $el.attr('data-val', newVal);
-            $el.css('width', newVal + '%');
+            $el.css('width', Math.min(100, newVal) + '%');
 
             // Update tooltip text
             const $parent = $el.closest('.stat-item');
             const name = $parent.attr('data-name');
-            $parent.attr('title', name + ': ' + newVal + '%');
+            $parent.attr('title', name + ': ' + newVal + (id === 'petCoins' ? '' : '%'));
 
+            saveState();
             return newVal;
         }
 
         function getStat(id) {
-            return parseInt($('#' + id).attr('data-val'));
+            return petState[id];
         }
+
+        $('#petNameDisplay').on('click', function() {
+            const newName = prompt('Elige un nuevo nombre:', petState.name);
+            if (newName && newName.trim() !== '') {
+                petState.name = newName.trim();
+                $(this).text(petState.name);
+                logAction('Cambió de nombre a ' + petState.name);
+                saveState();
+            }
+        });
 
         // Game basic interactivity
         $('#btnShower').on('click', () => {
             playInteraction('fa-shower');
             updateStat('petHealth', 5);
             updateStat('petHygiene', 20);
+            logAction('Tomó una ducha');
         });
 
         $('#btnFood').on('click', () => {
@@ -148,6 +197,7 @@ $(document).ready(function () {
                 updateStat('petHealth', 20);
                 updateStat('petHygiene', -10);
                 playInteraction('fa-burger');
+                logAction('Comió una hamburguesa');
             } else {
                 playInteraction('fa-xmark');
             }
@@ -159,16 +209,19 @@ $(document).ready(function () {
             updateStat('petHygiene', -5);
             updateStat('petHealth', -5);
             playInteraction('fa-baseball-bat-ball');
+            logAction('Jugó a la pelota');
         });
 
         $('#btnClean').on('click', () => {
             playInteraction('fa-sparkles');
             updateStat('petHygiene', 30);
             updateStat('petProd', 5);
+            logAction('Limpió su zona');
         });
 
         $('#btnShop').on('click', () => {
             $('#gameModal').removeClass('d-none');
+            logAction('Abrió la tienda');
         });
 
         $('#btnCloseGameModal').on('click', () => {
@@ -177,6 +230,7 @@ $(document).ready(function () {
 
         $('#btnFamily').on('click', () => {
             playInteraction('fa-heart');
+            logAction('Saludó a la familia');
         });
     }
 
