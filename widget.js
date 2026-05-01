@@ -241,10 +241,15 @@ $(document).ready(function () {
         // Screenshot handler
         $('#btnScreenshot').on('click', function() {
             const container = document.getElementById('petAvatarContainer');
-            // Pause animation temporarily for clean capture
+            // Pause animation and add padding so cosmetics aren't clipped
             container.style.animation = 'none';
+            container.style.padding = '40px 50px';
+            container.style.margin = '-40px -50px';
+            
             html2canvas(container, { backgroundColor: null, scale: 3 }).then(canvas => {
                 container.style.animation = '';
+                container.style.padding = '';
+                container.style.margin = '';
                 const link = document.createElement('a');
                 link.download = (petState.name || 'pou') + '_avatar.png';
                 link.href = canvas.toDataURL('image/png');
