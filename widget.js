@@ -94,6 +94,14 @@ $(document).ready(function () {
                         <div class="mini-pou">💩</div>
                     </button>
                 </div>
+                
+                <!-- In-widget modal -->
+                <div id="gameModal" class="game-modal d-none">
+                    <div class="game-modal-content">
+                        <h3 class="text-success fw-bold m-0 mb-3">¡Felicidades!</h3>
+                        <button class="btn btn-sm btn-outline-secondary" id="btnCloseGameModal">Cerrar</button>
+                    </div>
+                </div>
             </div>
         `);
 
@@ -160,8 +168,11 @@ $(document).ready(function () {
         });
 
         $('#btnShop').on('click', () => {
-            var shopModal = new bootstrap.Modal(document.getElementById('shopModal'));
-            shopModal.show();
+            $('#gameModal').removeClass('d-none');
+        });
+
+        $('#btnCloseGameModal').on('click', () => {
+            $('#gameModal').addClass('d-none');
         });
 
         $('#btnFamily').on('click', () => {
